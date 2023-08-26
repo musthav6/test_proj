@@ -13,8 +13,8 @@ class Order(db.Model):
     quantity = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(20), nullable=False, default='New')
 
-    address = db.relationship('Address', backref='orders')
-    product = db.relationship('Product', backref='orders')
+    address = db.relationship('Address', backref='order')
+    product = db.relationship('Product', backref='order')
 
 
 class Product(db.Model):
