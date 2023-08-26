@@ -3,9 +3,7 @@ from app import db
 
 class Address(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    country = db.Column(db.String(100), nullable=False)
     city = db.Column(db.String(100), nullable=False)
-    street = db.Column(db.String(200), nullable=False)
 
 
 class Order(db.Model):
