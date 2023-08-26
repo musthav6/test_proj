@@ -1,9 +1,10 @@
-from flask import Flask
-from app.routes import test_task
-# app = Flask(__name__)
 from app import app
-
+from app.routes.test_routes import test_task
+from app.routes.product_routes import product
+from app.routes.order_routes import order
 app.register_blueprint(test_task)
+app.register_blueprint(product)
+app.register_blueprint(order)
 
 
 if __name__ == '__main__':
