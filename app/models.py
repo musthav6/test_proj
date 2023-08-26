@@ -3,7 +3,7 @@ from app import db
 
 class Address(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    city = db.Column(db.String(100), nullable=False)
+    city = db.Column(db.String(100), unique=True)
 
 
 class Order(db.Model):
