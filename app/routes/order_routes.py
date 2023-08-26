@@ -8,10 +8,12 @@ order = Blueprint('order', __name__)
 
 @order.route('/create_order', methods=['POST'])
 def create_order():
-    data = request.get_json()
+    product = request.form.get('product')
+    address = request.form.get('address')
+
     new_order = Order(
-        order_number=data['order_number'],
-        status=data['status'],
+        product=product,
+        address_id=address,
     )
     db.session.add(new_order)
     db.session.commit()
