@@ -28,16 +28,17 @@ def create_order():
     db.session.add(new_order)
     db.session.commit()
 
-    return jsonify({"message": "Order with product created successfully"}), 201
+    return jsonify({'result': 'OK', 'response': "Order with product created successfully", 'meta': {'code': 201}}), 201
 
 
 @order.route('/get_order_status/<int:order_number>', methods=['GET'])
 def get_order_status(order_number):
     order = Order.query.filter_by(order_number=order_number).first()
     if order:
-        return jsonify({"order_number": order.order_number, "status": order.status}), 200
+        return jsonify({'result': 'OK', 'response': {"order_number": order.order_number,
+                                                     "status": order.status}, 'meta': {'code': 200}}), 200
     else:
-        return jsonify({"message": "Order not found"}), 404
+        return jsonify({'result': 'error', 'response': f'Order not found', 'meta': {'code': 404}}), 404
 
 
 @order.route('/update_order_status/<int:order_id>', methods=['PUT'])
