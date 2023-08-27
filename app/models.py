@@ -1,4 +1,6 @@
-from app import db
+from flask_login import UserMixin
+
+from app import db, login_manager
 
 
 class Address(db.Model):
@@ -22,3 +24,14 @@ class Product(db.Model):
     color = db.Column(db.String(50))
     weight = db.Column(db.Float)
     price = db.Column(db.Float, nullable=False)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return db.session.query(User).get(user_id)
+
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(60), nullable=False)

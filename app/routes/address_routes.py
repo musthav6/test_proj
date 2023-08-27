@@ -1,3 +1,5 @@
+from flask_login import login_required
+
 from app import app, db
 from app.models import Address
 from flask import request, jsonify, Blueprint
@@ -7,6 +9,7 @@ address = Blueprint('address', __name__)
 
 
 @address.route('/add_address', methods=['POST'])
+@login_required
 def add_address():
     city = request.form.get('city')
     new_address = Address(
@@ -27,6 +30,7 @@ def add_address():
 
 
 @address.route('/delete_address/<int:address_id>', methods=['DELETE'])
+@login_required
 def delete_address(address_id):
     address = Address.query.get(address_id)
     try:
