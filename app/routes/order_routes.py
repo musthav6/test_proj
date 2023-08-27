@@ -19,27 +19,29 @@ def create_order():
     if not product:
         return jsonify({'result': 'error', 'response': f'Address not found', 'meta': {'code': 404}}), 404
 
-    new_order = Order(
-        address_id=address.id,
-        product_id=product.id,
+    try:
+        new_order = Order(
+            address_id=address.id,
+            product_id=product.id,
 
-    )
-
-    db.session.add(new_order)
-    db.session.commit()
-
-    return jsonify({'result': 'OK', 'response': "Order with product created successfully", 'meta': {'code': 201}}), 201
-
+        )
+        db.session.add(new_order)
+        db.session.commit()
+        return jsonify({'result': 'OK', 'response': "Order with product created successfully", 'meta': {'code': 201}}), 201
+    except:
+        return jsonify({'result': 'error', 'response': f'internal server error', 'meta': {'code': 500}}), 500
 
 @order.route('/get_order_status/<int:order_number>', methods=['GET'])
 def get_order_status(order_number):
     order = Order.query.filter_by(order_number=order_number).first()
-    if order:
-        return jsonify({'result': 'OK', 'response': {"order_number": order.order_number,
-                                                     "status": order.status}, 'meta': {'code': 200}}), 200
-    else:
-        return jsonify({'result': 'error', 'response': f'Order not found', 'meta': {'code': 404}}), 404
-
+    try:
+        if order:
+            return jsonify({'result': 'OK', 'response': {"order_number": order.order_number,
+                                                         "status": order.status}, 'meta': {'code': 200}}), 200
+        else:
+            return jsonify({'result': 'error', 'response': f'Order not found', 'meta': {'code': 404}}), 404
+    except:
+        return jsonify({'result': 'error', 'response': f'internal server error', 'meta': {'code': 500}}), 500
 
 @order.route('/update_order_status/<int:order_id>', methods=['PUT'])
 def update_order_status(order_id):
@@ -47,17 +49,19 @@ def update_order_status(order_id):
     new_status = status
 
     order = Order.query.get(order_id)
-    if order:
-        old_status = order.status
-        order.status = new_status
-        db.session.commit()
+    try:
+        if order:
+            old_status = order.status
+            order.status = new_status
+            db.session.commit()
 
-        track_order_status.apply_async(args=[order_id, new_status])
+            track_order_status.apply_async(args=[order_id, new_status])
 
-        return jsonify({'result': 'OK', 'response': f"Order status {order_id} changed from {old_status} to {new_status}", 'meta': {'code': 201}}), 201
-    else:
-        return jsonify({'result': 'error', 'response': f'Order not found', 'meta': {'code': 404}}), 404
-
+            return jsonify({'result': 'OK', 'response': f"Order status {order_id} changed from {old_status} to {new_status}", 'meta': {'code': 201}}), 201
+        else:
+            return jsonify({'result': 'error', 'response': f'Order not found', 'meta': {'code': 404}}), 404
+    except:
+        return jsonify({'result': 'error', 'response': f'internal server error', 'meta': {'code': 500}}), 500
 
 @order.route('/get_order/<int:order_id>', methods=['GET'])
 def get_order(order_id):
@@ -91,4 +95,4 @@ def get_order(order_id):
 
         return jsonify({'result': 'OK', 'response': order_data, 'meta': {'code': 201}}), 201
     except:
-        return jsonify({'result': 'error', 'response': f'Address not found', 'meta': {'code': 500}}), 500
+        return jsonify({'result': 'error', 'response': f'internal server error', 'meta': {'code': 500}}), 500

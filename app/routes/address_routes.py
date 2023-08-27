@@ -22,15 +22,20 @@ def add_address():
         if expected_error_message in actual_error_message:
             db.session.rollback()
             return jsonify({'result': 'error', 'response': f'{city} exists in db ', 'meta': {'code': 400}}), 400
-    return jsonify({'result': 'error', 'meta': {'code': 500}}), 500
+
+    return jsonify({'result': 'error', 'response': f'internal server error', 'meta': {'code': 500}}), 500
 
 
 @address.route('/delete_address/<int:address_id>', methods=['DELETE'])
 def delete_address(address_id):
     address = Address.query.get(address_id)
-    if address:
-        db.session.delete(address)
-        db.session.commit()
-        return jsonify({'result': 'OK', 'response': address, 'meta': {'code': 201}}), 201
-    else:
-        return jsonify({'result': 'error', 'response': f'Address not found', 'meta': {'code': 400}}), 400
+    try:
+        if address:
+            db.session.delete(address)
+            db.session.commit()
+            return jsonify({'result': 'OK', 'response': address, 'meta': {'code': 201}}), 201
+        else:
+            return jsonify({'result': 'error', 'response': f'Address not found', 'meta': {'code': 400}}), 400
+
+    except:
+        return jsonify({'result': 'error', 'response': f'internal server error', 'meta': {'code': 500}}), 500
