@@ -4,9 +4,9 @@ ENV FLASK_APP=runner.py
 ENV FLASK_ENV=development
 
 COPY requirements.txt requirements.txt
-COPY app app
+COPY . .
 
 RUN pip install -r requirements.txt
 
 
-CMD ["flask", "run", "--host=0.0.0.0"]
+CMD ["flask", "run", "--host","0.0.0.0"]
