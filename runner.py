@@ -9,5 +9,7 @@ app.register_blueprint(product)
 app.register_blueprint(order)
 app.register_blueprint(address)
 app.register_blueprint(auth)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
