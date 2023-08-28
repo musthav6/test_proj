@@ -1,3 +1,5 @@
+from flask_login import login_required
+
 from app import db
 from app.models import Product
 from flask import request, jsonify, Blueprint
@@ -6,6 +8,7 @@ product = Blueprint('product', __name__)
 
 
 @product.route('/add_product', methods=['POST'])
+@login_required
 def add_product():
     name = request.form.get('name')
     color = request.form.get('color')
@@ -21,6 +24,7 @@ def add_product():
 
 
 @product.route('/update_product/<int:product_id>', methods=['PUT'])
+@login_required
 def update_product(product_id):
     data = request.get_json()
     product = Product.query.get(product_id)
@@ -39,6 +43,7 @@ def update_product(product_id):
 
 
 @product.route('/delete_product/<int:product_id>', methods=['DELETE'])
+@login_required
 def delete_product(product_id):
     product = Product.query.get(product_id)
     try:

@@ -1,3 +1,5 @@
+from flask_login import login_required
+
 from app import db
 from app.models import Order, Address, Product
 from flask import request, jsonify, Blueprint
@@ -7,6 +9,7 @@ order = Blueprint('order', __name__)
 
 
 @order.route('/create_order', methods=['POST'])
+@login_required
 def create_order():
     product = request.form.get('name')
     address = request.form.get('address')
@@ -27,11 +30,14 @@ def create_order():
         )
         db.session.add(new_order)
         db.session.commit()
-        return jsonify({'result': 'OK', 'response': "Order with product created successfully", 'meta': {'code': 201}}), 201
+        return jsonify(
+            {'result': 'OK', 'response': "Order with product created successfully", 'meta': {'code': 201}}), 201
     except:
         return jsonify({'result': 'error', 'response': f'internal server error', 'meta': {'code': 500}}), 500
 
+
 @order.route('/get_order_status/<int:order_number>', methods=['GET'])
+@login_required
 def get_order_status(order_number):
     order = Order.query.filter_by(order_number=order_number).first()
     try:
@@ -43,7 +49,9 @@ def get_order_status(order_number):
     except:
         return jsonify({'result': 'error', 'response': f'internal server error', 'meta': {'code': 500}}), 500
 
+
 @order.route('/update_order_status/<int:order_id>', methods=['PUT'])
+@login_required
 def update_order_status(order_id):
     status = request.form.get('set_status')
     new_status = status
@@ -57,13 +65,17 @@ def update_order_status(order_id):
 
             track_order_status.apply_async(args=[order_id, new_status])
 
-            return jsonify({'result': 'OK', 'response': f"Order status {order_id} changed from {old_status} to {new_status}", 'meta': {'code': 201}}), 201
+            return jsonify(
+                {'result': 'OK', 'response': f"Order status {order_id} changed from {old_status} to {new_status}",
+                 'meta': {'code': 201}}), 201
         else:
             return jsonify({'result': 'error', 'response': f'Order not found', 'meta': {'code': 404}}), 404
     except:
         return jsonify({'result': 'error', 'response': f'internal server error', 'meta': {'code': 500}}), 500
 
+
 @order.route('/get_order/<int:order_id>', methods=['GET'])
+@login_required
 def get_order(order_id):
     order = Order.query.get(order_id)
 

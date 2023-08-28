@@ -1,7 +1,7 @@
-from flask import render_template, url_for, flash, redirect, request, jsonify, Blueprint
+from flask import request, jsonify, Blueprint
 from flask_login import login_user, current_user, logout_user, login_required
 from app.models import User
-from app import app, db
+from app import db
 from sqlalchemy.exc import IntegrityError
 
 auth = Blueprint('auth', __name__)
